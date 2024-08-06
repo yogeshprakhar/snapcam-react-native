@@ -1,35 +1,37 @@
-import { Alert, Button, Image, StyleSheet} from "react-native";
+import { Alert, Button, Text, StyleSheet, View } from "react-native";
 import { HelloWave } from "@/components/HelloWave";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import {usePermissions} from "expo-media-library"
-import {useCameraPermissions, useMicrophonePermissions} from "expo-camera"
+import { usePermissions } from "expo-media-library";
+import { useCameraPermissions, useMicrophonePermissions } from "expo-camera";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 
 export default function OnboardingScreen() {
-  const [cameraPermissions, requestCameraPermissions] = useCameraPermissions()
-  const [microphonePermissions, requestMicrophonePermissions] = useMicrophonePermissions()
-  const [mediaLibraryPermissions, requestMediaLibraryPermissions] = usePermissions()
+  const [cameraPermissions, requestCameraPermissions] = useCameraPermissions();
+  const [microphonePermissions, requestMicrophonePermissions] =
+    useMicrophonePermissions();
+  const [mediaLibraryPermissions, requestMediaLibraryPermissions] =
+    usePermissions();
 
-  async function handleContinue(){
+  async function handleContinue() {
     const allPermissionsGranted = await requestAllPermissions();
     if (allPermissionsGranted) {
       // navigate to tabs
       router.replace("/(tabs)");
     } else {
       Alert.alert("To continue please provide permissions in settings");
-    } 
+    }
   }
 
-  async function requestAllPermissions(){
-    const cameraStatus = await requestCameraPermissions()
-    if(!cameraStatus.granted){
-      Alert.alert("Error",'Camera permissions id required')
+  async function requestAllPermissions() {
+    const cameraStatus = await requestCameraPermissions();
+    if (!cameraStatus.granted) {
+      Alert.alert("Error", "Camera permissions id required");
       return false;
     }
-    
+
     const microphoneStatus = await requestMicrophonePermissions();
     if (!microphoneStatus.granted) {
       Alert.alert("Error", "Microphone permission is required.");
@@ -51,10 +53,11 @@ export default function OnboardingScreen() {
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
       headerImage={
-        <Image
-          source={require("@/assets/images/partial-react-logo.png")}
-          style={styles.reactLogo}
-        />
+        <View style={styles.reactLogo}>
+          <Text style={{ fontSize: 60, color: "grey", fontWeight: "500" }}>
+            Welcome Amigo
+          </Text>
+        </View>
       }
     >
       <ThemedView style={styles.titleContainer}>
@@ -98,7 +101,7 @@ const styles = StyleSheet.create({
     height: 178,
     width: 290,
     bottom: 0,
-    left: 0,
+    left: 6,
     position: "absolute",
   },
 });
