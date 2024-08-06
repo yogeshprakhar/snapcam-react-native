@@ -1,11 +1,52 @@
-import { Image, StyleSheet} from "react-native";
-
+import { Alert, Button, Image, StyleSheet} from "react-native";
 import { HelloWave } from "@/components/HelloWave";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import {usePermissions} from "expo-media-library"
+import {useCameraPermissions, useMicrophonePermissions} from "expo-camera"
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
 
 export default function OnboardingScreen() {
+  const [cameraPermissions, requestCameraPermissions] = useCameraPermissions()
+  const [microphonePermissions, requestMicrophonePermissions] = useMicrophonePermissions()
+  const [mediaLibraryPermissions, requestMediaLibraryPermissions] = usePermissions()
+
+  async function handleContinue(){
+    const allPermissionsGranted = await requestAllPermissions();
+    if (allPermissionsGranted) {
+      // navigate to tabs
+      router.replace("/(tabs)");
+    } else {
+      Alert.alert("To continue please provide permissions in settings");
+    } 
+  }
+
+  async function requestAllPermissions(){
+    const cameraStatus = await requestCameraPermissions()
+    if(!cameraStatus.granted){
+      Alert.alert("Error",'Camera permissions id required')
+      return false;
+    }
+    
+    const microphoneStatus = await requestMicrophonePermissions();
+    if (!microphoneStatus.granted) {
+      Alert.alert("Error", "Microphone permission is required.");
+      return false;
+    }
+
+    const mediaLibraryStatus = await requestMediaLibraryPermissions();
+    if (!mediaLibraryStatus.granted) {
+      Alert.alert("Error", "Media Library permission is required.");
+      return false;
+    }
+
+    // only set to true once user provides permissions
+    // this prevents taking user to home screen without permissions
+    await AsyncStorage.setItem("hasOpened", "true");
+    return true;
+  }
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
@@ -38,7 +79,7 @@ export default function OnboardingScreen() {
         <ThemedText type="subtitle">Media Library Permissions</ThemedText>
         <ThemedText>📸 To save/view your amazing shots </ThemedText>
       </ThemedView>
-      {/* <Button title="Continue" onPress={handleContinue} /> */}
+      <Button title="Continue" onPress={handleContinue} />
     </ParallaxScrollView>
   );
 }
