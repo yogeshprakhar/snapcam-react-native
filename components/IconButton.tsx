@@ -33,26 +33,7 @@ export default function IconButton({
         containerStyle,
       ]}
     >
-      {/* <SymbolView
-        name={iosName}
-        size={ICON_SIZE}
-        // type="hierarchical"
-        style={
-          width && height //this won't scale :(
-            ? {
-                width,
-                height,
-              }
-            : {}
-        }
-        tintColor={"white"}
-      /> */}
-      <Ionicons
-        size={20}
-        name={androidName}
-        style={{}}
-        color={"white"}
-      />
+      <Ionicons size={20} name={androidName} style={{}} color={"white"} />
     </TouchableOpacity>
   );
 }
